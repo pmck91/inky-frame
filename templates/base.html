@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ title or "eInk Frame" }}</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>eInk Photo Frame</h1>
+      <nav>
+        <a href="/">Gallery</a>
+        <a href="/settings">Settings</a>
+      </nav>
+    </header>
+    <main class="container">{% block content %}{% endblock %}</main>
+    <script src="/static/app.js"></script>
+  </body>
+</html>
