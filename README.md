@@ -40,14 +40,14 @@ sudo apt install -y python3 python3-venv python3-pip libjpeg-dev zlib1g-dev
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 # restart shell, then:
-cd /home/pi/eink-info-bw
+cd //home/[Update with your user]/eink-info-bw
 uv sync
 ```
 
 ### 3. Run manually (test)
 
 ```bash
-cd /home/pi/eink-info-bw
+cd //home/[Update with your user]/eink-info-bw
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -69,7 +69,13 @@ sudo reboot
 
 ## systemd Service (Port 80)
 
-Create `/etc/systemd/system/eink-frame.service`:
+Copy the bundled service file:
+
+```bash
+sudo cp deploy/systemd/eink-frame.service /etc/systemd/system/eink-frame.service
+```
+
+Service contents (`deploy/systemd/eink-frame.service`):
 
 ```ini
 [Unit]
@@ -81,13 +87,21 @@ Wants=network-online.target
 Type=simple
 User=pi
 Group=pi
-WorkingDirectory=/home/pi/eink-info-bw
+WorkingDirectory=/home/[Update with your user]/eink-info-bw
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/home/pi/eink-info-bw/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
+ExecStart=//home/[Update with your user]/eink-info-bw/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
 Restart=always
 RestartSec=3
+
+# Allow non-root bind to privileged port 80
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+
+# Basic hardening
 NoNewPrivileges=true
 PrivateTmp=true
+ProtectSystem=full
+ProtectHome=false
 
 [Install]
 WantedBy=multi-user.target
@@ -108,7 +122,7 @@ Logs:
 journalctl -u eink-frame.service -f
 ```
 
-Note: Port `80` is privileged. If binding fails as `pi`, use nginx reverse-proxy on `80` and run app on `8000`.
+Note: Port `80` is privileged; this service uses `CAP_NET_BIND_SERVICE` so it can run as `pi`.
 
 ## Storage
 
