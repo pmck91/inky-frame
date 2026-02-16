@@ -121,14 +121,32 @@ async def save_cropped_image(
 
 
 @app.post("/upload")
-async def upload_images(files: list[UploadFile] = File(...)):
-    for upload in files:
+async def upload_images(request: Request, files: list[UploadFile] | None = File(default=None)):
+    uploads: list[UploadFile] = files or []
+
+    # Fallback parser for clients that post under non-standard field names
+    # such as "files[]" or "file".
+    if not uploads:
+        form = await request.form()
+        for key in ("files", "files[]", "file"):
+            value = form.getlist(key)
+            uploads.extend([item for item in value if isinstance(item, UploadFile)])
+
+    if not uploads:
+        raise HTTPException(status_code=400, detail="No files were uploaded")
+
+    accepted = 0
+    for upload in uploads:
         if not upload.filename:
             continue
         if upload.content_type is None or not upload.content_type.startswith("image/"):
             continue
         image = await save_original_upload(upload)
         add_pending_image(image)
+        accepted += 1
+
+    if accepted == 0:
+        raise HTTPException(status_code=400, detail="No valid image files found in upload")
 
     return RedirectResponse(url="/crop", status_code=303)
 
