@@ -40,14 +40,14 @@ sudo apt install -y python3 python3-venv python3-pip libjpeg-dev zlib1g-dev
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 # restart shell, then:
-cd //home/[Update with your user]/inky-frame
+cd /home/[Update with your user]/inky-frame
 uv sync
 ```
 
 ### 3. Run manually (test)
 
 ```bash
-cd //home/[Update with your user]/inky-frame
+cd /home/[Update with your user]/inky-frame
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 

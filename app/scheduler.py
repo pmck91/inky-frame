@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import asyncio
 from pathlib import Path
+from PIL import Image
+from inky.auto import auto
 
 from .config import BASE_DIR
 from .storage import get_and_advance_next_image, get_rotation_seconds
 
+display = auto()
 
 class RotationScheduler:
     def __init__(self) -> None:
@@ -37,5 +40,7 @@ class RotationScheduler:
 
 
 def display(image_path: Path) -> None:
-    """Placeholder for actual Inky display rendering implementation."""
-    print(f"Display placeholder: {image_path}")
+    with Image.open(image_path) as im:
+        display.set_image(im)
+        display.show()
+
