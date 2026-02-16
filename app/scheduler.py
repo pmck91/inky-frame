@@ -44,8 +44,8 @@ class RotationScheduler:
 
 
 def display(image_path: Path) -> None:
-    with Image.open(image_path) as im:
-        logger.info("loaded image from path: " + str(image_path))
-        inky_display.set_image(im)
-        inky_display.show()
+    im = Image.open(image_path)
+    logger.info("loaded image from path: " + str(image_path))
+    inky_display.set_image(im)
+    inky_display.show()
 
