@@ -12,7 +12,7 @@ from .storage import get_and_advance_next_image, get_rotation_seconds
 logger = logging.getLogger(__name__)
 inky_display = auto()
 
-logger.info("initialised display with resolution: " + inky_display.resolution)
+logger.info("initialised display with resolution: " + str(inky_display.resolution))
 
 class RotationScheduler:
     def __init__(self) -> None:
