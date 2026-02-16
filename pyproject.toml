@@ -1,5 +1,5 @@
 [project]
-name = "eink-info-bw"
+name = "inky-frame"
 version = "0.1.0"
 description = "Web-managed eInk photo frame for Raspberry Pi Zero 2 W"
 readme = "README.md"

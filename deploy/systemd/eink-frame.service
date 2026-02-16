@@ -7,9 +7,9 @@ Wants=network-online.target
 Type=simple
 User=inky
 Group=inky
-WorkingDirectory=/home/inky/eink-info-bw
+WorkingDirectory=/home/inky/inky-frame
 Environment=PYTHONUNBUFFERED=1
-ExecStart=/home/inky/eink-info-bw/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
+ExecStart=/home/inky/inky-frame/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
 
 Restart=always
 RestartSec=3

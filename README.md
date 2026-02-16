@@ -40,14 +40,14 @@ sudo apt install -y python3 python3-venv python3-pip libjpeg-dev zlib1g-dev
 ```bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 # restart shell, then:
-cd //home/[Update with your user]/eink-info-bw
+cd //home/[Update with your user]/inky-frame
 uv sync
 ```
 
 ### 3. Run manually (test)
 
 ```bash
-cd //home/[Update with your user]/eink-info-bw
+cd //home/[Update with your user]/inky-frame
 uv run uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
@@ -87,9 +87,9 @@ Wants=network-online.target
 Type=simple
 User=pi
 Group=pi
-WorkingDirectory=/home/[Update with your user]/eink-info-bw
+WorkingDirectory=/home/[Update with your user]/inky-frame
 Environment=PYTHONUNBUFFERED=1
-ExecStart=//home/[Update with your user]/eink-info-bw/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
+ExecStart=//home/[Update with your user]/inky-frame/.venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 80
 Restart=always
 RestartSec=3
 
