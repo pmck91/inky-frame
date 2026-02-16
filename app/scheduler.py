@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from pathlib import Path
 from PIL import Image
 from inky.auto import auto
@@ -8,7 +9,10 @@ from inky.auto import auto
 from .config import BASE_DIR
 from .storage import get_and_advance_next_image, get_rotation_seconds
 
-display = auto()
+logger = logging.getLogger(__name__)
+inky_display = auto()
+
+logger.info("initialised display with resolution: " + inky_display.resolution)
 
 class RotationScheduler:
     def __init__(self) -> None:
@@ -41,6 +45,7 @@ class RotationScheduler:
 
 def display(image_path: Path) -> None:
     with Image.open(image_path) as im:
-        display.set_image(im)
-        display.show()
+        logger.info("loaded image from path: " + str(image_path))
+        inky_display.set_image(im)
+        inky_display.show()
 
