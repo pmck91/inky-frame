@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Photo frame favicon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e9f3f5"/>
+      <stop offset="1" stop-color="#d2e4e8"/>
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="56" height="56" rx="10" fill="#1c2a2f"/>
+  <rect x="10" y="10" width="44" height="44" rx="6" fill="url(#bg)"/>
+  <rect x="14" y="14" width="36" height="28" rx="3" fill="#ffffff"/>
+  <path d="M16 39l8-9 6 6 7-8 11 11H16z" fill="#7eb7a8"/>
+  <circle cx="42" cy="21" r="3" fill="#f2c14e"/>
+  <rect x="18" y="46" width="28" height="3" rx="1.5" fill="#157a6e"/>
+</svg>

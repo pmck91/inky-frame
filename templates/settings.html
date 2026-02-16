@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="panel narrow">
-  <h2>Rotation Settings</h2>
+<section class="panel">
+  <h2>Display Settings</h2>
   <form action="/settings" method="post" class="settings-form">
     <label for="rotation_seconds">Seconds between image changes</label>
     <input
@@ -13,7 +13,32 @@
       value="{{ rotation_seconds }}"
       required
     />
+
+    <label for="display_preset">Display preset</label>
+    <select id="display_preset">
+      <option value="600x400" {% if display_width == 600 and display_height == 400 %}selected{% endif %}>
+        Inky Impression 4.0 (600x400)
+      </option>
+      <option value="600x448" {% if display_width == 600 and display_height == 448 %}selected{% endif %}>
+        Inky Impression 5.7 (600x448)
+      </option>
+      <option value="800x480" {% if display_width == 800 and display_height == 480 %}selected{% endif %}>
+        Inky Impression 7.3 (800x480)
+      </option>
+      <option value="1600x1200" {% if display_width == 1600 and display_height == 1200 %}selected{% endif %}>
+        Inky Impression 13.3 (1600x1200)
+      </option>
+      <option value="custom">Custom</option>
+    </select>
+
+    <label for="display_width">Display width (px)</label>
+    <input type="number" id="display_width" name="display_width" min="100" step="1" value="{{ display_width }}" required />
+
+    <label for="display_height">Display height (px)</label>
+    <input type="number" id="display_height" name="display_height" min="100" step="1" value="{{ display_height }}" required />
+
     <button type="submit">Save</button>
   </form>
 </section>
+<script src="/static/settings.js"></script>
 {% endblock %}

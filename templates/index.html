@@ -2,23 +2,49 @@
 {% block content %}
 <section class="panel">
   <h2>Upload Photos</h2>
+  <p class="queue-help">Current display size: {{ display_width }} x {{ display_height }}</p>
   <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
-    <div class="controls-row">
-      <label for="mode">Processing mode</label>
-      <select name="mode" id="mode">
-        <option value="fit_crop" selected>Fit + Crop (fill screen)</option>
-        <option value="fit">Resize to fit (letterbox)</option>
-        <option value="crop">Center crop to screen</option>
-      </select>
-    </div>
-
     <label for="files" class="dropzone" id="dropzone">
       <input id="files" type="file" name="files" accept="image/*" multiple hidden />
-      <span>Drag and drop photos here, or tap to choose files</span>
+      <span>Drag and drop photos here, or tap to choose files (uploads start automatically)</span>
     </label>
-
-    <button type="submit">Upload</button>
   </form>
+  <div id="upload-status" class="upload-status" aria-live="polite">
+    <div id="upload-status-text">No files selected.</div>
+    <div class="progress-shell" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+      <div id="upload-progress" class="progress-bar"></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel">
+  <div class="panel-title-row">
+    <h2>Crop Queue</h2>
+    <small>{{ pending_count }} waiting</small>
+  </div>
+
+  {% if pending %}
+  <p class="queue-help">Only images you finish in the crop editor will appear on the display.</p>
+  <a class="inline-link" href="/crop/{{ pending[0].id }}">Open Next Image in Editor</a>
+  <ul class="pending-list">
+    {% for image in pending %}
+    <li class="pending-item">
+      <img src="/{{ image.original_path }}" alt="{{ image.name }}" />
+      <div>
+        <strong>{{ image.name }}</strong>
+      </div>
+      <div class="pending-actions">
+        <a class="button-link" href="/crop/{{ image.id }}">Crop</a>
+        <form action="/delete/{{ image.id }}" method="post">
+          <button class="danger" type="submit">Delete</button>
+        </form>
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p>No pending images.</p>
+  {% endif %}
 </section>
 
 <section class="panel">
@@ -34,7 +60,7 @@
       <img src="/{{ image.processed_path }}" alt="{{ image.name }}" />
       <div class="card-meta">
         <strong>{{ image.name }}</strong>
-        <span>Mode: {{ image.mode }}</span>
+        <span>Edited: {{ image.mode or "manual" }}</span>
       </div>
       <form action="/delete/{{ image.id }}" method="post">
         <button class="danger" type="submit">Delete</button>
@@ -43,7 +69,7 @@
     {% endfor %}
   </ul>
   {% else %}
-  <p>No images uploaded yet.</p>
+  <p>No display-ready images yet.</p>
   {% endif %}
 </section>
 {% endblock %}

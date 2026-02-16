@@ -1,6 +1,86 @@
 (() => {
+  const uploadForm = document.getElementById("upload-form");
   const dropzone = document.getElementById("dropzone");
   const fileInput = document.getElementById("files");
+  const uploadStatusText = document.getElementById("upload-status-text");
+  const uploadProgress = document.getElementById("upload-progress");
+  const progressShell = document.querySelector(".progress-shell");
+  let droppedFiles = null;
+  let uploadInFlight = false;
+
+  const setUploadStatus = (message, percent = null) => {
+    if (uploadStatusText) {
+      uploadStatusText.textContent = message;
+    }
+    if (uploadProgress && percent != null) {
+      const clamped = Math.max(0, Math.min(100, Math.round(percent)));
+      uploadProgress.style.width = `${clamped}%`;
+      if (progressShell) {
+        progressShell.setAttribute("aria-valuenow", String(clamped));
+      }
+    }
+  };
+
+  const getSelectedFiles = () => {
+    return fileInput?.files && fileInput.files.length ? fileInput.files : droppedFiles;
+  };
+
+  const updateQueuedCount = (selectedOverride = null) => {
+    const selected = selectedOverride || getSelectedFiles();
+    const count = selected?.length || 0;
+    if (!count) {
+      setUploadStatus("No files selected.", 0);
+      return;
+    }
+    const noun = count === 1 ? "file" : "files";
+    setUploadStatus(`${count} ${noun} ready to upload.`, 0);
+  };
+
+  const startUpload = (selected) => {
+    const files = Array.from(selected || []);
+    if (!files.length) {
+      setUploadStatus("Choose at least one image before uploading.", 0);
+      return;
+    }
+    if (uploadInFlight) {
+      setUploadStatus("Upload already in progress...", null);
+      return;
+    }
+
+    uploadInFlight = true;
+    setUploadStatus("Preparing upload...", 1);
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("files", file, file.name));
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload", true);
+
+    xhr.upload.onprogress = (event) => {
+      if (!event.lengthComputable) return;
+      const percent = (event.loaded / event.total) * 100;
+      setUploadStatus(`Uploading... ${Math.round(percent)}%`, percent);
+    };
+
+    xhr.onload = () => {
+      uploadInFlight = false;
+      if (xhr.status >= 200 && xhr.status < 400) {
+        setUploadStatus("Upload complete. Redirecting...", 100);
+        // Always go to crop queue after successful upload.
+        window.location.href = "/crop";
+        return;
+      }
+      const detail = xhr.responseText ? ` ${xhr.responseText.slice(0, 120)}` : "";
+      setUploadStatus(`Upload failed (HTTP ${xhr.status}).${detail}`, 0);
+    };
+
+    xhr.onerror = () => {
+      uploadInFlight = false;
+      setUploadStatus("Upload failed due to a network error.", 0);
+    };
+
+    xhr.send(formData);
+  };
 
   if (dropzone && fileInput) {
     const activate = (on) => dropzone.classList.toggle("active", on);
@@ -21,8 +101,34 @@
 
     dropzone.addEventListener("drop", (e) => {
       if (!e.dataTransfer?.files?.length) return;
-      fileInput.files = e.dataTransfer.files;
+      droppedFiles = e.dataTransfer.files;
+      try {
+        fileInput.files = droppedFiles;
+      } catch (_err) {
+        // Some browsers block assigning to input.files; submit handler uses droppedFiles.
+      }
+      updateQueuedCount(droppedFiles);
+      startUpload(droppedFiles);
     });
+  }
+
+  if (uploadForm && fileInput) {
+    fileInput.addEventListener("change", () => {
+      if (fileInput.files && fileInput.files.length) {
+        droppedFiles = null;
+      }
+      const selected = getSelectedFiles();
+      updateQueuedCount(selected);
+      startUpload(selected);
+    });
+
+    uploadForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const selected = getSelectedFiles();
+      startUpload(selected);
+    });
+
+    updateQueuedCount();
   }
 
   const list = document.getElementById("image-list");

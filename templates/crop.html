@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+<section
+  class="panel crop-layout"
+  id="crop-editor"
+  data-image-id="{{ image.id }}"
+  data-image-src="/{{ image.original_path }}"
+  data-display-width="{{ display_width }}"
+  data-display-height="{{ display_height }}"
+>
+  <div class="panel-title-row">
+    <h2>Crop / Resize Editor</h2>
+    <small>{{ queue_position }} of {{ queue_total }}</small>
+  </div>
+
+  <p class="queue-help"><strong>{{ image.name }}</strong></p>
+
+  <div class="crop-grid">
+    <div class="canvas-wrap">
+      <div class="canvas-stage">
+        <canvas id="crop-canvas" width="{{ display_width }}" height="{{ display_height }}"></canvas>
+        <div id="safe-area" class="safe-area" aria-hidden="true"></div>
+      </div>
+    </div>
+
+    <div class="editor-controls">
+      <label for="mode">Tool Mode</label>
+      <select id="mode">
+        <option value="cover" selected>Crop to fill (cover)</option>
+        <option value="contain">Resize to fit (contain)</option>
+      </select>
+
+      <label for="zoom">Zoom</label>
+      <input id="zoom" type="range" min="50" max="300" step="1" value="100" />
+
+      <label for="offset-x">Horizontal</label>
+      <input id="offset-x" type="range" min="-900" max="900" step="1" value="0" />
+
+      <label for="offset-y">Vertical</label>
+      <input id="offset-y" type="range" min="-900" max="900" step="1" value="0" />
+
+      <label>Rotate</label>
+      <div class="button-row">
+        <button id="rotate-left" type="button">Rotate Left</button>
+        <button id="rotate-right" type="button">Rotate Right</button>
+      </div>
+
+      <label>Flip</label>
+      <div class="button-row">
+        <button id="flip-x" type="button">Flip Horizontal</button>
+        <button id="flip-y" type="button">Flip Vertical</button>
+      </div>
+
+      <div class="button-row">
+        <button id="reset-view" type="button">Reset View</button>
+      </div>
+
+      <div class="button-row">
+        <button id="save-crop" class="primary-cta" type="button">Save and Continue</button>
+      </div>
+
+      <div class="button-row">
+        {% if next_pending_id %}
+        <a class="inline-link" href="/crop/{{ next_pending_id }}">Skip for now</a>
+        {% else %}
+        <a class="inline-link" href="/">Back to Gallery</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+<script src="/static/crop.js"></script>
+{% endblock %}
