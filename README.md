@@ -67,6 +67,25 @@ Reboot after enabling:
 sudo reboot
 ```
 
+## troubleshooting: Chip Select: (line 8, GPIO8) currently claimed by spi0 CS0
+
+```bash
+sudo nano /boot/firmware/config.txt 
+```
+
+and add the following line at the top
+
+```ini
+dtoverlay=spi0-0cs
+```
+
+Then reboot
+
+```bash
+sudo reboot
+```
+
+
 ## systemd Service (Port 80)
 
 Copy the bundled service file:
