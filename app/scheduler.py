@@ -9,6 +9,8 @@ from .config import BASE_DIR
 from .storage import get_and_advance_next_image, get_rotation_seconds
 
 display = auto()
+print(display.resolution)
+
 
 class RotationScheduler:
     def __init__(self) -> None:
